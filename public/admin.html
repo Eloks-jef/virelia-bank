@@ -200,7 +200,7 @@
 
     async function loadUsers() {
       try {
-        const response = await fetch('http://localhost:5001/api/admin/users', {
+        const response = await fetch(window.location.origin + '/api/admin/users', {
           headers: {
             'admin-key': ADMIN_KEY
           }
@@ -279,7 +279,7 @@
       }
 
       try {
-        const response = await fetch('http://localhost:5001/api/admin/add-money', {
+        const response = await fetch(window.location.origin + '/api/admin/add-money', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -303,7 +303,7 @@
       }
 
       try {
-        const response = await fetch('http://localhost:5001/api/admin/remove-money', {
+        const response = await fetch(window.location.origin + '/api/admin/remove-money', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -327,7 +327,7 @@
       }
 
       try {
-        const response = await fetch('http://localhost:5001/api/admin/set-balance', {
+        const response = await fetch(window.location.origin + '/api/admin/set-balance', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
