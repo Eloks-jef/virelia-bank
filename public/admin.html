@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VIRELIA Bank - Admin Panel</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f1f5f9;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: #0f172a;
+      margin-bottom: 30px;
+      font-size: 32px;
+    }
+
+    .admin-login {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      max-width: 400px;
+      margin: 100px auto;
+    }
+
+    .admin-login h2 {
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    button {
+      padding: 12px 20px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    .user-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .user-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .user-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .user-email {
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    .account-info {
+      background: #f8fafc;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    .account-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .account-row:last-child {
+      border-bottom: none;
+    }
+
+    .account-type {
+      font-weight: 600;
+    }
+
+    .account-balance {
+      font-weight: 700;
+      color: #2563eb;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .action-buttons input {
+      margin-bottom: 0;
+      width: 120px;
+    }
+
+    .btn-add {
+      background: #16a34a;
+    }
+
+    .btn-add:hover {
+      background: #15803d;
+    }
+
+    .btn-remove {
+      background: #dc2626;
+    }
+
+    .btn-remove:hover {
+      background: #b91c1c;
+    }
+
+    .btn-set {
+      background: #d97706;
+    }
+
+    .btn-set:hover {
+      background: #b45309;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .error {
+      color: #dc2626;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Admin Login -->
+    <div id="adminLogin" class="admin-login">
+      <h2>Admin Access</h2>
+      <input type="password" id="adminKey" placeholder="Enter admin key">
+      <button onclick="loginAdmin()">Login</button>
+      <div id="loginError" class="error"></div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="hidden">
+      <h1>🏦 VIRELIA Bank - Admin Panel</h1>
+      <div id="usersList"></div>
+    </div>
+  </div>
+
+  <script>
+    const ADMIN_KEY = '0803776612409162633879';
+    let users = [];
+
+    function loginAdmin() {
+      const key = document.getElementById('adminKey').value;
+      if (key === ADMIN_KEY) {
+        document.getElementById('adminLogin').classList.add('hidden');
+        document.getElementById('adminPanel').classList.remove('hidden');
+        loadUsers();
+      } else {
+        document.getElementById('loginError').textContent = 'Invalid admin key';
+      }
+    }
+
+    async function loadUsers() {
+      try {
+        const response = await fetch('http://localhost:5001/api/admin/users', {
+          headers: {
+            'admin-key': ADMIN_KEY
+          }
+        });
+        users = await response.json();
+        displayUsers();
+      } catch (error) {
+        console.error('Error loading users:', error);
+      }
+    }
+
+    function displayUsers() {
+      const container = document.getElementById('usersList');
+      container.innerHTML = '';
+
+      users.forEach(user => {
+        const userCard = document.createElement('div');
+        userCard.className = 'user-card';
+        
+        let accountsHTML = '';
+        user.accounts.forEach(account => {
+          accountsHTML += `
+            <div class="account-row">
+              <span class="account-type">${account.type} (${account.number})</span>
+              <span class="account-balance">$${account.balance.toFixed(2)}</span>
+            </div>
+          `;
+        });
+
+        let accountActionsHTML = '';
+        user.accounts.forEach(account => {
+          accountActionsHTML += `
+            <div class="action-buttons" style="margin-top: 10px;">
+              <input type="number" id="amount-${account.id}" placeholder="Amount" step="0.01">
+              <button class="btn-add" onclick="addMoney(${account.id})">Add Money</button>
+              <button class="btn-remove" onclick="removeMoney(${account.id})">Remove Money</button>
+              <button class="btn-set" onclick="setBalance(${account.id})">Set Balance</button>
+            </div>
+          `;
+        });
+
+        userCard.innerHTML = `
+          <div class="user-header">
+            <div>
+              <div class="user-name">${user.name}</div>
+              <div class="user-email">${user.email}</div>
+            </div>
+            <div>
+              <span style="color: ${user.is_activated ? 'green' : 'orange'}; font-weight: 600;">
+                ${user.is_activated ? '✓ Activated' : '⚠ Not Activated'}
+              </span>
+            </div>
+          </div>
+          <div class="account-info">
+            ${accountsHTML}
+          </div>
+          ${accountActionsHTML}
+          <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e2e8f0;">
+            <strong>Details:</strong><br>
+            Phone: ${user.phone || 'N/A'}<br>
+            DOB: ${user.date_of_birth || 'N/A'}<br>
+            Address: ${user.address || 'N/A'}<br>
+            Created: ${new Date(user.created_at).toLocaleDateString()}
+          </div>
+        `;
+
+        container.appendChild(userCard);
+      });
+    }
+
+    async function addMoney(accountId) {
+      const amount = parseFloat(document.getElementById(`amount-${accountId}`).value);
+      if (!amount || amount <= 0) {
+        alert('Please enter a valid amount');
+        return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:5001/api/admin/add-money', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'admin-key': ADMIN_KEY
+          },
+          body: JSON.stringify({ accountId, amount })
+        });
+        const data = await response.json();
+        alert(data.message);
+        loadUsers();
+      } catch (error) {
+        console.error('Error adding money:', error);
+      }
+    }
+
+    async function removeMoney(accountId) {
+      const amount = parseFloat(document.getElementById(`amount-${accountId}`).value);
+      if (!amount || amount <= 0) {
+        alert('Please enter a valid amount');
+        return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:5001/api/admin/remove-money', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'admin-key': ADMIN_KEY
+          },
+          body: JSON.stringify({ accountId, amount })
+        });
+        const data = await response.json();
+        alert(data.message);
+        loadUsers();
+      } catch (error) {
+        console.error('Error removing money:', error);
+      }
+    }
+
+    async function setBalance(accountId) {
+      const balance = parseFloat(document.getElementById(`amount-${accountId}`).value);
+      if (balance === undefined || balance < 0) {
+        alert('Please enter a valid balance');
+        return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:5001/api/admin/set-balance', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'admin-key': ADMIN_KEY
+          },
+          body: JSON.stringify({ accountId, balance })
+        });
+        const data = await response.json();
+        alert(data.message);
+        loadUsers();
+      } catch (error) {
+        console.error('Error setting balance:', error);
+      }
+    }
+  </script>
+</body>
+</html>

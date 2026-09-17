@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VIRELIA Bank | Online Banking</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="light-theme">
+
+  <!-- AUTHENTICATION SCREEN -->
+  <section id="authScreen" class="screen active">
+    <div class="auth-container">
+      <div class="auth-brand">
+        <div class="brand-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="white"/>
+            <path d="M2 17L12 22L22 17" stroke="white" stroke-width="2"/>
+            <path d="M2 12L12 17L22 12" stroke="white" stroke-width="2"/>
+          </svg>
+        </div>
+        <h1 data-i18n="bank_name">VIRELIA Bank</h1>
+        <p class="tagline" data-i18n="tagline">Next-Generation Digital Banking</p>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <div id="loginBox" class="auth-box">
+        <div class="auth-header">
+          <h2 data-i18n="welcome_back">Welcome Back</h2>
+          <p data-i18n="sign_in_subtitle">Sign in to access your secure account dashboard.</p>
+        </div>
+
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="loginEmail" data-i18n="email_address">Email address</label>
+            <input type="email" id="loginEmail" placeholder="e.g. alex@example.com" autocomplete="email" required>
+          </div>
+
+          <div class="form-group">
+            <label for="loginPassword" data-i18n="password">Password</label>
+            <div class="password-input-wrapper">
+              <input type="password" id="loginPassword" placeholder="Enter your password" autocomplete="current-password" required>
+              <button type="button" class="password-toggle" data-password-target="loginPassword" aria-label="Show password">👁️</button>
+            </div>
+          </div>
+
+          <div class="form-row auth-remember-row">
+            <label class="checkbox-label">
+              <input type="checkbox" id="rememberMe">
+              <span data-i18n="remember_email">Remember email</span>
+            </label>
+            <a href="#" id="forgotPasswordLink" class="inline-link" data-i18n="forgot_password">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="primary-btn" data-i18n="sign_in">Sign In</button>
+        </form>
+
+        <div id="loginError" class="message" aria-live="polite"></div>
+
+        <p class="toggle-link">
+          <span data-i18n="dont_have_account">Don't have an account?</span>
+          <a href="#" id="showRegister" data-i18n="create_account_link">Create account</a>
+        </p>
+      </div>
+
+      <!-- REGISTER FORM -->
+      <div id="registerBox" class="auth-box hidden">
+        <div class="auth-header">
+          <h2 data-i18n="create_account_title">Create Account</h2>
+          <p data-i18n="create_account_subtitle">Open your VIRELIA online banking profile in minutes.</p>
+        </div>
+
+        <form id="registerForm">
+          <div class="form-section-title">
+            <h3 data-i18n="personal_information">Personal Information</h3>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="regFirstName" data-i18n="first_name">First Name</label>
+              <input type="text" id="regFirstName" placeholder="e.g. Alex" autocomplete="given-name" required>
+            </div>
+            <div class="form-group">
+              <label for="regLastName" data-i18n="last_name">Last Name</label>
+              <input type="text" id="regLastName" placeholder="e.g. Morgan" autocomplete="family-name" required>
+            </div>
+          </div>
+
+          <input type="hidden" id="regName">
+
+          <div class="form-group">
+            <label for="regUsername" data-i18n="username">Username</label>
+            <input type="text" id="regUsername" placeholder="Choose a username" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="regEmail" data-i18n="email">Email Address</label>
+              <input type="email" id="regEmail" placeholder="name@example.com" autocomplete="email" required>
+            </div>
+            <div class="form-group">
+              <label for="regPhone" data-i18n="phone">Phone Number</label>
+              <input type="tel" id="regPhone" placeholder="+1 (555) 000-0000" autocomplete="tel" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="regDob" data-i18n="dob">Date of Birth</label>
+              <input type="date" id="regDob" required>
+            </div>
+            <div class="form-group">
+              <label for="regCountry" data-i18n="country">Country</label>
+              <select id="regCountry" required>
+                <option value="" data-i18n="select_country">Select country</option>
+                <option value="United States">United States</option>
+                <option value="United Kingdom">United Kingdom</option>
+                <option value="Canada">Canada</option>
+                <option value="Australia">Australia</option>
+                <option value="Nigeria">Nigeria</option>
+                <option value="Ghana">Ghana</option>
+                <option value="South Africa">South Africa</option>
+                <option value="Kenya">Kenya</option>
+                <option value="Germany">Germany</option>
+                <option value="France">France</option>
+                <option value="Spain">Spain</option>
+                <option value="Italy">Italy</option>
+                <option value="Brazil">Brazil</option>
+                <option value="Mexico">Mexico</option>
+                <option value="Japan">Japan</option>
+                <option value="China">China</option>
+                <option value="India">India</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="regAddress" data-i18n="address">Residential Address</label>
+            <input type="text" id="regAddress" placeholder="Street, City, Zip Code" required>
+          </div>
+
+          <div class="form-section-title security-title">
+            <h3 data-i18n="secure_account">Secure your account</h3>
+            <p data-i18n="secure_account_subtitle">Choose a strong password to protect your account.</p>
+          </div>
+
+          <div class="form-group">
+            <label for="regPassword" data-i18n="password">Password</label>
+            <div class="password-input-wrapper">
+              <input type="password" id="regPassword" placeholder="Create a strong password" minlength="8" autocomplete="new-password" required>
+              <button type="button" class="password-toggle" data-password-target="regPassword" aria-label="Show password">👁️</button>
+            </div>
+            <div class="password-strength">
+              <div class="password-strength-bars"><span></span><span></span><span></span><span></span></div>
+              <small id="passwordStrengthText" data-i18n="password_hint">Use at least 8 characters.</small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="regConfirmPassword" data-i18n="confirm_password">Confirm password</label>
+            <div class="password-input-wrapper">
+              <input type="password" id="regConfirmPassword" placeholder="Re-enter your password" minlength="8" autocomplete="new-password" required>
+              <button type="button" class="password-toggle" data-password-target="regConfirmPassword" aria-label="Show password">👁️</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="regPicture" data-i18n="profile_picture">Profile picture</label>
+            <div class="profile-upload-area">
+              <img id="registerPreview" class="register-preview hidden" src="" alt="Profile preview">
+              <div class="upload-placeholder"><span>📷</span><p data-i18n="upload_photo">Upload profile photo</p></div>
+              <input type="file" id="regPicture" accept="image/*" required>
+            </div>
+            <small class="form-hint" data-i18n="choose_clear_image">Choose a clear profile image.</small>
+          </div>
+
+          <label class="terms-checkbox">
+            <input type="checkbox" id="agreeTerms" required>
+            <span data-i18n="agree_terms">I agree to the Terms of Service and Privacy Policy.</span>
+          </label>
+
+          <button type="submit" class="primary-btn" data-i18n="create_account_btn">Create Account</button>
+        </form>
+
+        <div id="registerError" class="message" aria-live="polite"></div>
+        <div id="registerSuccess" class="message" aria-live="polite"></div>
+
+        <p class="toggle-link">
+          <span data-i18n="already_have_account">Already have an account?</span>
+          <a href="#" id="showLogin" data-i18n="sign_in_link">Sign in</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DASHBOARD SCREEN -->
+  <section id="dashboardScreen" class="screen">
+    <header class="dashboard-header">
+      <div class="header-left">
+        <button id="dashboardLogoBtn" class="dashboard-logo-btn" type="button">
+          <div class="brand-icon small-brand">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="white"/>
+              <path d="M2 17L12 22L22 17" stroke="white" stroke-width="2"/>
+              <path d="M2 12L12 17L22 12" stroke="white" stroke-width="2"/>
+            </svg>
+          </div>
+          <span class="bank-name" data-i18n="bank_name">VIRELIA Bank</span>
+        </button>
+      </div>
+
+      <div class="header-right">
+        <button id="refreshDashboardBtn" class="header-btn" title="Refresh dashboard" aria-label="Refresh dashboard">↻</button>
+
+        <div class="notification-wrapper">
+          <button id="notificationBtn" class="header-btn notification-btn" aria-label="Notifications">🔔
+            <span id="notificationCount" class="notification-count" style="display:none;">0</span>
+          </button>
+          <div id="notificationDropdown" class="notification-dropdown hidden">
+            <div class="notification-header">
+              <h3 data-i18n="notifications">Notifications</h3>
+              <button id="markNotificationsReadBtn" type="button" data-i18n="mark_all_read">Mark all read</button>
+            </div>
+            <div id="notificationList" class="notification-list">
+              <p class="empty-notification" data-i18n="all_caught_up">You're all caught up.</p>
+            </div>
+          </div>
+        </div>
+
+        <button id="languageBtn" class="header-btn" title="Change Language / Cambiar Idioma" aria-label="Change Language">🌐 <span id="currentLanguageCode">EN</span></button>
+        <button id="currencyBtn" class="header-btn" title="Change Currency" aria-label="Change Currency"><span id="currentCurrency">$</span></button>
+        <button id="hideBalanceBtn" class="header-btn" title="Hide Balance" aria-label="Hide Balance">👁️</button>
+        <button id="themeToggle" class="theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme">🌙</button>
+
+        <div class="user-info">
+          <span class="welcome-text" data-i18n="welcome_text">Welcome back,</span>
+          <strong id="userName">User</strong>
+        </div>
+
+        <button id="profileBtn" class="profile-btn" aria-label="Open Profile">
+          <img id="profilePicture" src="" alt="Profile" class="profile-pic">
+        </button>
+
+        <div class="settings-menu">
+          <button id="settingsBtn" class="settings-btn" aria-label="Open Settings">⋮</button>
+          <div id="settingsDropdown" class="settings-dropdown hidden">
+            <button id="settingsProfileBtn" class="settings-item">👤 <span data-i18n="view_profile">View Profile</span></button>
+            <button id="settingsLanguageBtn" class="settings-item">🌐 <span data-i18n="language">Language / Idioma</span></button>
+            <button id="settingsCurrencyBtn" class="settings-item">💱 <span data-i18n="change_currency">Change Currency</span></button>
+            <button id="settingsHideBalanceBtn" class="settings-item">👁️ <span data-i18n="toggle_balance">Toggle Balance</span></button>
+            <button id="settingsThemeBtn" class="settings-item">🌙 <span data-i18n="toggle_theme">Toggle Theme</span></button>
+            <div class="settings-divider"></div>
+            <button id="settingsLogoutBtn" class="settings-item danger">🚪 <span data-i18n="logout">Logout</span></button>
+          </div>
+        </div>
+
+        <button id="logoutBtn" class="logout-btn" data-i18n="logout">Logout</button>
+      </div>
+    </header>
+
+    <main class="dashboard-content">
+      <section class="dashboard-intro">
+        <div>
+          <div class="intro-top-row">
+            <p class="eyebrow" data-i18n="account_overview">ACCOUNT OVERVIEW</p>
+            <span id="accountStatusBadge" class="account-status-badge">Checking status...</span>
+          </div>
+          <h1 data-i18n="dashboard_title">Your finances, simplified.</h1>
+          <p class="dashboard-subtitle" data-i18n="dashboard_subtitle">Monitor your accounts, move money securely and stay in control of your financial activity.</p>
+        </div>
+        
+      </section>
+
+      
+      <section class="total-balance-card">
+        <div class="balance-card-content">
+         <!-- User Name -->
+         <div class="balance-user-info">
+           <span class="balance-greeting">Welcome back,</span>
+           <strong id="balanceUserName">User</strong>
+         </div>
+
+          <!-- Balance Amount -->
+         <div class="balance-main">
+           <p class="balance-label">Total Balance</p>
+           <h2 class="balance-amount" id="totalBalance">$0.00</h2>
+           <p class="balance-currency-note">Display currency: <span id="balanceCurrencyCode">USD</span></p>
+          </div>
+
+          
+
+         <!-- Footer -->
+         <div class="balance-card-footer">
+           <span>Your balance is updated automatically.</span>
+           <button id="balanceToggleCardBtn" class="balance-toggle-card-btn" type="button">👁️</button>
+         </div>
+        </div>
+      </section>
+      
+      <section class="accounts-section">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow" data-i18n="your_money">YOUR MONEY</p>
+            <h2 data-i18n="your_accounts">Your Accounts</h2>
+            <p class="section-description" data-i18n="accounts_description">View your balances and account details in one place.</p>
+          </div>
+        </div>
+        <div id="accountsContainer" class="accounts-grid">
+          <div class="loading-card" data-i18n="loading_accounts">Loading accounts...</div>
+        </div>
+      </section>
+
+      <section class="quick-actions-section">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow" data-i18n="quick_actions">QUICK ACTIONS</p>
+            <h2 data-i18n="move_money">Move your money</h2>
+            <p class="section-description" data-i18n="move_money_description">Fast, secure transfers whenever you need them.</p>
+          </div>
+        </div>
+        <div class="quick-actions-grid">
+          <button class="quick-action" data-transfer-type="internal" type="button">
+            <span class="action-icon">⇄</span>
+            <span class="action-content"><strong data-i18n="between_accounts">Between Accounts</strong><small data-i18n="between_accounts_sub">Move money between your VIRELIA accounts</small></span>
+            <span class="action-arrow">→</span>
+          </button>
+          <button class="quick-action" data-transfer-type="user" type="button">
+            <span class="action-icon">→</span>
+            <span class="action-content"><strong data-i18n="send_to_user">Send to VIRELIA User</strong><small data-i18n="send_to_user_sub">Transfer instantly to another VIRELIA member</small></span>
+            <span class="action-arrow">→</span>
+          </button>
+          <button class="quick-action" data-transfer-type="bank" type="button">
+            <span class="action-icon">↗</span>
+            <span class="action-content"><strong data-i18n="bank_transfer">Bank Transfer</strong><small data-i18n="bank_transfer_sub">Send money to an external bank account</small></span>
+            <span class="action-arrow">→</span>
+          </button>
+          <button class="quick-action" id="quickAddMoneyBtn" type="button">
+            <span class="action-icon">＋</span>
+            <span class="action-content"><strong data-i18n="add_money">Add Money</strong><small data-i18n="add_money_sub">Fund your VIRELIA account</small></span>
+            <span class="action-arrow">→</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="transfer-section" id="transferSection">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow" data-i18n="transfer">TRANSFER</p>
+            <h2 id="transferTitle" data-i18n="transfer_between">Transfer Between Accounts</h2>
+            <p class="section-description" data-i18n="transfer_description">Review your details carefully before continuing.</p>
+          </div>
+        </div>
+        <div class="transfer-card">
+          <div class="form-group">
+            <label for="transferType" data-i18n="transfer_type">Transfer type</label>
+            <select id="transferType">
+              <option value="internal" data-i18n="between_my_accounts">Between My Accounts</option>
+              <option value="user" data-i18n="internal_transfer">Internal Transfer</option>
+              <option value="bank" data-i18n="bank_transfer_option">Bank Transfer</option>
+            </select>
+          </div>
+
+          <form id="transferForm" class="transfer-form">
+            <div class="form-group">
+              <label for="fromAccount" data-i18n="from">From</label>
+              <select id="fromAccount" required><option value="" data-i18n="select_account">Select account</option></select>
+            </div>
+
+            <div class="form-group" id="toAccountGroup">
+              <label for="toAccount" data-i18n="to">To</label>
+              <select id="toAccount"><option value="" data-i18n="select_account">Select account</option></select>
+            </div>
+
+            <div class="form-group hidden" id="recipientGroup">
+              <label for="recipientEmail" data-i18n="recipient_email">Recipient email</label>
+              <input type="email" id="recipientEmail" placeholder="Enter VIRELIA member email">
+              <small class="form-hint" data-i18n="recipient_hint">The recipient must be a registered VIRELIA member.</small>
+            </div>
+
+            <div class="bank-fields hidden" id="bankFields">
+              <div class="form-group">
+                <label for="bankRecipient" data-i18n="recipient_name">Recipient name</label>
+                <input type="text" id="bankRecipient" placeholder="Enter recipient name">
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="bankAccount" data-i18n="account_number">Account number</label>
+                  <input type="text" id="bankAccount" placeholder="Enter account number" inputmode="numeric">
+                </div>
+                <div class="form-group">
+                  <label for="bankName" data-i18n="bank_name_field">Bank name</label>
+                  <input type="text" id="bankName" placeholder="Enter bank name">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="transferAmount" data-i18n="amount">Amount</label>
+              <div class="amount-input-wrapper">
+                <span class="currency-prefix" id="transferCurrencySymbol">$</span>
+                <input type="number" id="transferAmount" placeholder="0.00" min="0.01" step="0.01" inputmode="decimal" required>
+              </div>
+              <small class="amount-hint" id="amountInWords"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="transferDesc"><span data-i18n="description">Description</span> <span class="optional" data-i18n="optional">Optional</span></label>
+              <input type="text" id="transferDesc" placeholder="What's this transfer for?" maxlength="150">
+            </div>
+
+            <div class="transfer-security-note">
+              <span>🔒</span>
+              <p data-i18n="transfer_security">Your transfer will be verified before it is processed.</p>
+            </div>
+
+            <button type="submit" class="primary-btn" data-i18n="continue_transfer">Continue Transfer</button>
+          </form>
+
+          <div id="transferMessage" class="message transfer-message" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="transactions-section">
+        <div class="section-header transactions-heading">
+          <div>
+            <p class="eyebrow" data-i18n="activity">ACTIVITY</p>
+            <h2 data-i18n="recent_transactions">Recent Transactions</h2>
+            <p class="section-description" data-i18n="activity_description">Keep track of money coming in and going out.</p>
+          </div>
+          <button id="refreshTransactionsBtn" class="secondary-btn refresh-transactions-btn" type="button" data-i18n="refresh">↻ Refresh</button>
+        </div>
+
+        <div class="transaction-tools">
+          <div class="transaction-search">
+            <span>🔍</span>
+            <input type="search" id="transactionSearch" placeholder="Search transactions..." data-i18n-placeholder="search_transactions">
+          </div>
+        </div>
+
+        <div class="transaction-filters" role="group" aria-label="Transaction filters">
+          <button class="filter-btn active" data-filter="all" type="button" data-i18n="all">All</button>
+          <button class="filter-btn" data-filter="incoming" type="button" data-i18n="incoming">Incoming</button>
+          <button class="filter-btn" data-filter="outgoing" type="button" data-i18n="outgoing">Outgoing</button>
+          <button class="filter-btn" data-filter="pending" type="button" data-i18n="pending">Pending</button>
+        </div>
+
+        <div id="transactionsContainer" class="transactions-list">
+          <div class="transaction-loading" data-i18n="loading_transactions">Loading transactions...</div>
+        </div>
+
+        <button id="viewAllTransactionsBtn" class="secondary-btn view-all-transactions-btn" type="button" data-i18n="view_all_transactions">View All Transactions</button>
+      </section>
+
+      <section class="insights-section">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow" data-i18n="insights">INSIGHTS</p>
+            <h2 data-i18n="financial_snapshot">Your financial snapshot</h2>
+            <p class="section-description" data-i18n="insights_description">Smart insights based on your account activity.</p>
+          </div>
+        </div>
+        <div class="insights-grid">
+          <article class="insight-card">
+            <span class="insight-icon">📊</span>
+            <h3 data-i18n="spending_activity">Spending activity</h3>
+            <p id="spendingInsight" data-i18n="spending_insight">Your spending insights will appear as transactions are added.</p>
+          </article>
+          <article class="insight-card">
+            <span class="insight-icon">💰</span>
+            <h3 data-i18n="cash_flow">Cash flow</h3>
+            <p id="cashFlowInsight" data-i18n="cash_flow_insight">Track your incoming and outgoing money.</p>
+          </article>
+          <article class="insight-card">
+            <span class="insight-icon">🔐</span>
+            <h3 data-i18n="account_protection">Account protection</h3>
+            <p data-i18n="protection_insight">Keep your account secure and never share verification codes.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <nav class="mobile-nav" aria-label="Mobile navigation">
+      <button class="mobile-nav-btn active" id="mobileHomeBtn" type="button"><span>⌂</span><small data-i18n="home">Home</small></button>
+      <button class="mobile-nav-btn" id="mobileTransferBtn" type="button"><span>⇄</span><small data-i18n="transfer_nav">Transfer</small></button>
+      <button class="mobile-nav-btn" id="mobileActivityBtn" type="button"><span>◷</span><small data-i18n="activity_nav">Activity</small></button>
+      <button class="mobile-nav-btn" id="mobileProfileBtn" type="button"><span>◉</span><small data-i18n="profile">Profile</small></button>
+    </nav>
+
+    <section class="account-health-grid">
+      <article class="account-health-card">
+        <span class="health-icon">🛡️</span>
+        <div><small data-i18n="account_security">Account Security</small><strong id="securityStatus" data-i18n="protected">Protected</strong></div>
+      </article>
+      <article class="account-health-card">
+        <span class="health-icon">✓</span>
+        <div><small data-i18n="verification">Verification</small><strong id="verificationStatus" data-i18n="pending_review">Pending review</strong></div>
+      </article>
+      <article class="account-health-card">
+        <span class="health-icon">◷</span>
+        <div><small data-i18n="last_login">Last login</small><strong id="lastLogin" data-i18n="just_now">Just now</strong></div>
+      </article>
+      <article class="account-health-card">
+        <span class="health-icon">👤</span>
+        <div><small data-i18n="profile_completion">Profile completion</small><strong id="profileCompletion">100%</strong></div>
+      </article>
+    </section>
+  </section>
+
+  <!-- PROFILE MODAL -->
+  <div id="profileModal" class="modal hidden">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="profileModalTitle">
+      <div class="modal-header">
+        <div><p class="eyebrow" data-i18n="account">ACCOUNT</p><h2 id="profileModalTitle" data-i18n="your_profile">Your Profile</h2></div>
+        <button id="closeProfileBtn" class="close-btn" aria-label="Close profile">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="profile-details">
+          <img id="modalProfilePicture" src="" alt="Profile" class="modal-profile-pic">
+          <div class="profile-info">
+            <h3 id="modalName"></h3>
+            <p id="modalEmail"></p>
+            <p id="modalPhone"></p>
+          </div>
+        </div>
+        <div class="profile-fields">
+          <div class="profile-field"><label data-i18n="username">Username</label><p id="modalUsername"></p></div>
+          <div class="profile-field"><label data-i18n="dob">Date of Birth</label><p id="modalDob"></p></div>
+          <div class="profile-field"><label data-i18n="address">Address</label><p id="modalAddress"></p></div>
+          <div class="profile-field"><label data-i18n="member_since">Member Since</label><p id="modalMemberSince"></p></div>
+          <div class="profile-field"><label data-i18n="account_status">Account Status</label><p id="modalAccountStatus"></p></div>
+          <div class="profile-field"><label data-i18n="verification_status">Verification Status</label><p id="modalVerificationStatus"></p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVATION MODAL -->
+  <div id="activationModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 data-i18n="account_activation_required">Account Activation Required</h2>
+        <button id="closeActivationBtn" class="close-btn" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-icon">🔐</div>
+        <p class="modal-message" data-i18n="activation_message">Your account needs to be activated before you can make an external bank transfer.</p>
+        <button id="activateNowBtn" class="primary-btn" data-i18n="activate_now">Activate Now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVATION CODE MODAL -->
+  <div id="activationCodeModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 data-i18n="activation_code">Activation Code</h2>
+        <button id="closeActivationCodeBtn" class="close-btn" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-message" data-i18n="activation_code_message">Enter your activation code to activate your account.</p>
+        <div class="form-group">
+          <label for="activationCode" data-i18n="activation_code">Activation code</label>
+          <input type="password" id="activationCode" placeholder="Enter activation code" autocomplete="one-time-code">
+          <small class="form-hint" data-i18n="activation_code_hint">Your activation code is required to unlock bank transfers.</small>
+        </div>
+        <button id="submitActivationBtn" class="primary-btn" data-i18n="activate_account">Activate Account</button>
+        <div id="activationError" class="message" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVATION SUCCESS -->
+  <div id="activationSuccessModal" class="modal hidden">
+    <div class="modal-content success-modal">
+      <div class="success-icon">✓</div>
+      <h2 data-i18n="account_activated">Account Activated!</h2>
+      <p data-i18n="activated_message">Your account has been successfully activated.</p>
+      <button id="continueTransferBtn" class="primary-btn" data-i18n="continue_transfer_btn">Continue Transfer</button>
+    </div>
+  </div>
+
+  <!-- TRANSFER CODE MODAL -->
+  <div id="transferCodeModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 data-i18n="confirm_transfer">Confirm Transfer</h2>
+        <button id="closeTransferCodeBtn" class="close-btn" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-message" data-i18n="transfer_code_message">Enter your transfer code to complete this bank transfer.</p>
+        <div class="form-group">
+          <label for="transferCode" data-i18n="transfer_code">Transfer code</label>
+          <input type="password" id="transferCode" placeholder="Enter transfer code" autocomplete="one-time-code">
+          <small class="form-hint" data-i18n="transfer_code_hint">This verification step helps protect your transfer.</small>
+        </div>
+        <button id="submitTransferCodeBtn" class="primary-btn" data-i18n="verify_continue">Verify & Continue</button>
+        <div id="transferCodeError" class="message" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRANSFER SUCCESS -->
+  <div id="transferSuccessModal" class="modal hidden">
+    <div class="modal-content success-modal">
+      <div class="success-icon">✓</div>
+      <h2 data-i18n="transfer_initiated">Transfer Initiated!</h2>
+      <p data-i18n="transfer_submitted">Your bank transfer has been submitted successfully.</p>
+      <div class="transfer-status-card">
+        <span class="status-badge pending" data-i18n="status_pending">Status: Pending</span>
+        <p class="transfer-ref"><span data-i18n="reference">Reference:</span> <strong>#<span id="transferReference"></span></strong></p>
+      </div>
+      <button id="closeTransferSuccessBtn" class="primary-btn" data-i18n="done">Done</button>
+    </div>
+  </div>
+
+  <!-- CURRENCY MODAL -->
+  <div id="currencyModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div><p class="eyebrow" data-i18n="display_settings">DISPLAY SETTINGS</p><h2 data-i18n="select_currency">Select Currency</h2></div>
+        <button id="closeCurrencyBtn" class="close-btn" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-message" data-i18n="currency_description">Choose the currency used to display your account values.</p>
+        <div class="currency-list">
+          <button class="currency-item active" data-currency="USD" data-symbol="$" data-rate="1" type="button">
+            <span class="currency-symbol">$</span><span class="currency-name">US Dollar</span><span class="currency-code">USD</span>
+          </button>
+          <button class="currency-item" data-currency="EUR" data-symbol="€" data-rate="0.92" type="button">
+            <span class="currency-symbol">€</span><span class="currency-name">Euro</span><span class="currency-code">EUR</span>
+          </button>
+          <button class="currency-item" data-currency="GBP" data-symbol="£" data-rate="0.79" type="button">
+            <span class="currency-symbol">£</span><span class="currency-name">British Pound</span><span class="currency-code">GBP</span>
+          </button>
+          <button class="currency-item" data-currency="MXN" data-symbol="Mex$" data-rate="17.10" type="button">
+            <span class="currency-symbol">Mex$</span><span class="currency-name">Mexican Peso</span><span class="currency-code">MXN</span>
+          </button>
+          <button class="currency-item" data-currency="JPY" data-symbol="¥" data-rate="149" type="button">
+            <span class="currency-symbol">¥</span><span class="currency-name">Japanese Yen</span><span class="currency-code">JPY</span>
+          </button>
+          <button class="currency-item" data-currency="CAD" data-symbol="C$" data-rate="1.36" type="button">
+            <span class="currency-symbol">C$</span><span class="currency-name">Canadian Dollar</span><span class="currency-code">CAD</span>
+          </button>
+          <button class="currency-item" data-currency="AUD" data-symbol="A$" data-rate="1.52" type="button">
+            <span class="currency-symbol">A$</span><span class="currency-name">Australian Dollar</span><span class="currency-code">AUD</span>
+          </button>
+          <button class="currency-item" data-currency="CHF" data-symbol="Fr" data-rate="0.88" type="button">
+            <span class="currency-symbol">Fr</span><span class="currency-name">Swiss Franc</span><span class="currency-code">CHF</span>
+          </button>
+          <button class="currency-item" data-currency="CNY" data-symbol="¥" data-rate="7.24" type="button">
+            <span class="currency-symbol">¥</span><span class="currency-name">Chinese Yuan</span><span class="currency-code">CNY</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LANGUAGE MODAL -->
+  <div id="languageModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div><p class="eyebrow" data-i18n="language_eyebrow">LANGUAGE / IDIOMA</p><h2 data-i18n="select_language">Select Language / Seleccionar Idioma</h2></div>
+        <button id="closeLanguageBtn" class="close-btn" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-message" data-i18n="language_description">Choose your preferred display language / Elija su idioma preferido.</p>
+        <div class="language-list">
+          <button class="language-item active" data-lang="en" type="button">
+            <span class="language-flag">🇺🇸</span><span class="language-name">English</span><span class="language-code">EN</span>
+          </button>
+          <button class="language-item" data-lang="es" type="button">
+            <span class="language-flag">🇲🇽</span><span class="language-name">Español</span><span class="language-code">ES</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECEIPT MODAL -->
+  <div id="receiptModal" class="modal hidden">
+    <div class="modal-content receipt-modal-content">
+      <div class="modal-header">
+        <div><p class="eyebrow" data-i18n="transaction">TRANSACTION</p><h2 data-i18n="transaction_receipt">Transaction Receipt</h2></div>
+        <button id="closeReceiptBtn" class="close-btn" aria-label="Close receipt">×</button>
+      </div>
+      <div class="modal-body">
+        <div id="receiptDetails" class="receipt-details"></div>
+        <div class="receipt-actions">
+          <button id="printReceiptBtn" class="secondary-btn" type="button" data-i18n="print_receipt">🖨️ Print Receipt</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
