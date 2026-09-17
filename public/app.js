@@ -1,5 +1,5 @@
 // Configuration & Global State
-const API_URL = "http://192.168.29.93:5001/api";
+const API_URL = window.location.origin + "/api";
 
 let currentUser = null;
 let currentCurrency = { code: "USD", symbol: "$", rate: 1.0 };

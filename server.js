@@ -91,7 +91,7 @@ app.use('/uploads', express.static(uploadsDir));
 
 // ===== DATABASE =====
 const db = new sqlite3.Database(
-  path.join(__dirname, 'virelia.db'),
+  path.join(__dirname, 'data', 'virelia.db'),
   (err) => {
     if (err) {
       console.error('Database connection error:', err.message);
