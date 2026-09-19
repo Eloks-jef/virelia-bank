@@ -1684,8 +1684,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const dateOfBirth =
       document.getElementById("regDob")?.value || "";
 
-    const country =
-      document.getElementById("regCountry")?.value || "";
+    
+     
 
     const address =
       document.getElementById("regAddress")?.value.trim() || "";
