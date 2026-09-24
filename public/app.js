@@ -1655,6 +1655,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const registerError = document.getElementById("registerError");
   const registerSuccess = document.getElementById("registerSuccess");
 
+   
   registerForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -1749,7 +1750,7 @@ document.addEventListener("DOMContentLoaded", () => {
       formData.append("phone", phone);
       formData.append("username", username);
       formData.append("dateOfBirth", dateOfBirth);
-      formData.append("country", country);
+      
       formData.append("address", address);
 
       if (profilePictureFile) {
