@@ -89,94 +89,87 @@ const upload = multer({
 // Serve uploaded files
 app.use('/uploads', express.static(uploadsDir));
 
-// ===== DATABASE =====
-const db = new sqlite3.Database(
-  path.join(__dirname, 'data', 'virelia.db'),
-  (err) => {
-    if (err) {
-      console.error('Database connection error:', err.message);
-    } else {
-      console.log('🗄️ Connected to VIRELIA database.');
-    }
-  }
-);
+// ===== DATABASE (TURSO / LIBSQL) =====
+const { createClient } = require('@libsql/client');
 
-db.run('PRAGMA foreign_keys = ON');
+const db = createClient({
+  url: process.env.TURSO_DATABASE_URL,
+  authToken: process.env.TURSO_AUTH_TOKEN,
+});
 
-function runQuery(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    db.run(sql, params, function (err) {
-      if (err) reject(err);
-      else resolve({ lastID: this.lastID, changes: this.changes });
-    });
-  });
+console.log('🗄️ Connected to Turso cloud database.');
+
+// Helper functions to keep your existing code working
+async function runQuery(sql, params = []) {
+  const result = await db.execute({ sql, args: params });
+  return { lastID: result.lastInsertRowid, changes: result.rowsAffected };
 }
 
-function getQuery(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    db.get(sql, params, (err, row) => {
-      if (err) reject(err);
-      else resolve(row);
-    });
-  });
+async function getQuery(sql, params = []) {
+  const result = await db.execute({ sql, args: params });
+  return result.rows[0];
 }
 
-function allQuery(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    db.all(sql, params, (err, rows) => {
-      if (err) reject(err);
-      else resolve(rows);
-    });
-  });
+async function allQuery(sql, params = []) {
+  const result = await db.execute({ sql, args: params });
+  return result.rows;
 }
 
 // ===== CREATE TABLES =====
-db.serialize(() => {
-  db.run(`
-    CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      username TEXT,
-      email TEXT NOT NULL UNIQUE,
-      password TEXT NOT NULL,
-      phone TEXT,
-      date_of_birth TEXT,
-      country TEXT,
-      address TEXT,
-      profile_picture TEXT,
-      is_activated INTEGER DEFAULT 0,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
+async function setupDatabase() {
+  try {
+    await runQuery(`
+      CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        username TEXT,
+        email TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL,
+        phone TEXT,
+        date_of_birth TEXT,
+        country TEXT,
+        address TEXT,
+        profile_picture TEXT,
+        is_activated INTEGER DEFAULT 0,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
 
-  db.run(`
-    CREATE TABLE IF NOT EXISTS accounts (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER NOT NULL,
-      type TEXT NOT NULL,
-      balance REAL NOT NULL DEFAULT 0,
-      number TEXT NOT NULL UNIQUE,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (user_id) REFERENCES users(id)
-    )
-  `);
+    await runQuery(`
+      CREATE TABLE IF NOT EXISTS accounts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        type TEXT NOT NULL,
+        balance REAL NOT NULL DEFAULT 0,
+        number TEXT NOT NULL UNIQUE,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      )
+    `);
 
-  db.run(`
-    CREATE TABLE IF NOT EXISTS transactions (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      account_id INTEGER NOT NULL,
-      type TEXT NOT NULL,
-      description TEXT NOT NULL,
-      amount REAL NOT NULL,
-      status TEXT NOT NULL DEFAULT 'Completed',
-      recipient_name TEXT,
-      recipient_account TEXT,
-      recipient_bank TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (account_id) REFERENCES accounts(id)
-    )
-  `);
-});
+    await runQuery(`
+      CREATE TABLE IF NOT EXISTS transactions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        account_id INTEGER NOT NULL,
+        type TEXT NOT NULL,
+        description TEXT NOT NULL,
+        amount REAL NOT NULL,
+        status TEXT NOT NULL DEFAULT 'Completed',
+        recipient_name TEXT,
+        recipient_account TEXT,
+        recipient_bank TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (account_id) REFERENCES accounts(id)
+      )
+    `);
+    
+    console.log('✅ Tables created/verified on Turso.');
+  } catch (error) {
+    console.error('❌ Error creating tables:', error);
+  }
+}
+
+setupDatabase();
 
 // ===== AUTH MIDDLEWARE =====
 function authenticateToken(req, res, next) {
