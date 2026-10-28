@@ -101,7 +101,10 @@ console.log('🗄️ Connected to Turso cloud database.');
 // Helper functions to keep your existing code working
 async function runQuery(sql, params = []) {
   const result = await db.execute({ sql, args: params });
-  return { lastID: result.lastInsertRowid, changes: result.rowsAffected };
+  return { 
+    lastID: Number(result.lastInsertRowid), 
+    changes: result.rowsAffected 
+  };
 }
 
 async function getQuery(sql, params = []) {
@@ -222,9 +225,19 @@ app.post('/api/register', upload.single('profilePicture'), async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const result = await runQuery(
+        const result = await runQuery(
       'INSERT INTO users (name, username, email, password, phone, date_of_birth, country, address, profile_picture) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [name.trim(), username?.trim() || null, email.toLowerCase(), hashedPassword, phone, dateOfBirth, country, address, profilePicture]
+      [
+        name.trim(), 
+        username?.trim() || null, 
+        email.toLowerCase(), 
+        hashedPassword, 
+        phone || null, 
+        dateOfBirth || null, 
+        country || null, 
+        address || null, 
+        profilePicture || null
+      ]
     );
 
     const userId = result.lastID;
