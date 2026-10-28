@@ -288,7 +288,7 @@
           body: JSON.stringify({ accountId, amount })
         });
         const data = await response.json();
-        alert(data.message);
+        alert(data.message || data.error || "Action completed successfully!");
         loadUsers();
       } catch (error) {
         console.error('Error adding money:', error);
@@ -312,7 +312,7 @@
           body: JSON.stringify({ accountId, amount })
         });
         const data = await response.json();
-        alert(data.message);
+        alert(data.message || data.error || "Action completed successfully!");
         loadUsers();
       } catch (error) {
         console.error('Error removing money:', error);
@@ -336,7 +336,7 @@
           body: JSON.stringify({ accountId, balance })
         });
         const data = await response.json();
-        alert(data.message);
+        alert(data.message || data.error || "Action completed successfully!");
         loadUsers();
       } catch (error) {
         console.error('Error setting balance:', error);

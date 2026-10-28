@@ -392,22 +392,22 @@ app.post('/api/transfer', authenticateToken, async (req, res) => {
   }
 
   try {
-    await runQuery('BEGIN IMMEDIATE');
+  
 
     const fromAccount = await getQuery('SELECT * FROM accounts WHERE id = ? AND user_id = ?', [fromAccountId, req.user.id]);
     if (!fromAccount) {
-      await runQuery('ROLLBACK');
+      
       return res.status(400).json({ error: 'Source account not found.' });
     }
 
     if (Number(fromAccount.balance) < transferAmount) {
-      await runQuery('ROLLBACK');
+      
       return res.status(400).json({ error: 'Insufficient funds.' });
     }
 
     const toAccount = await getQuery('SELECT * FROM accounts WHERE id = ? AND user_id = ?', [toAccountId, req.user.id]);
     if (!toAccount) {
-      await runQuery('ROLLBACK');
+      
       return res.status(400).json({ error: 'Destination account not found.' });
     }
 
@@ -417,12 +417,12 @@ app.post('/api/transfer', authenticateToken, async (req, res) => {
     await runQuery('INSERT INTO transactions (account_id, type, description, amount, status) VALUES (?, ?, ?, ?, ?)', [fromAccountId, 'transfer', description?.trim() || 'Internal Transfer', -transferAmount, 'Completed']);
     await runQuery('INSERT INTO transactions (account_id, type, description, amount, status) VALUES (?, ?, ?, ?, ?)', [toAccountId, 'transfer', description?.trim() || 'Internal Transfer', transferAmount, 'Completed']);
 
-    await runQuery('COMMIT');
+    
     res.json({ message: 'Transfer completed successfully.' });
 
   } catch (error) {
     console.error('Internal transfer error:', error);
-    try { await runQuery('ROLLBACK'); } catch (e) {}
+    
     res.status(500).json({ error: 'Transfer failed. No money was moved.' });
   }
 });
@@ -439,33 +439,33 @@ app.post('/api/transfer/member', authenticateToken, async (req, res) => {
   }
 
   try {
-    await runQuery('BEGIN IMMEDIATE');
+    
 
     const recipient = await getQuery('SELECT id, name FROM users WHERE email = ?', [recipientEmail.trim().toLowerCase()]);
     if (!recipient) {
-      await runQuery('ROLLBACK');
+      
       return res.status(400).json({ error: 'Recipient not found. Please check the email address.' });
     }
 
     if (recipient.id === req.user.id) {
-      await runQuery('ROLLBACK');
+      
       return res.status(400).json({ error: 'You cannot transfer money to yourself.' });
     }
 
     const fromAccount = await getQuery('SELECT * FROM accounts WHERE id = ? AND user_id = ?', [fromAccountId, req.user.id]);
     if (!fromAccount) {
-      await runQuery('ROLLBACK');
+      
       return res.status(400).json({ error: 'Source account not found.' });
     }
 
     if (Number(fromAccount.balance) < transferAmount) {
-      await runQuery('ROLLBACK');
+      
       return res.status(400).json({ error: 'Insufficient funds.' });
     }
 
     const toAccount = await getQuery('SELECT * FROM accounts WHERE user_id = ? AND type = ? LIMIT 1', [recipient.id, 'Checking']);
     if (!toAccount) {
-      await runQuery('ROLLBACK');
+      
       return res.status(400).json({ error: 'Recipient account not found.' });
     }
 
@@ -475,12 +475,12 @@ app.post('/api/transfer/member', authenticateToken, async (req, res) => {
     await runQuery('INSERT INTO transactions (account_id, type, description, amount, status) VALUES (?, ?, ?, ?, ?)', [fromAccountId, 'transfer', description?.trim() || `Transfer to ${recipient.name}`, -transferAmount, 'Completed']);
     await runQuery('INSERT INTO transactions (account_id, type, description, amount, status) VALUES (?, ?, ?, ?, ?)', [toAccount.id, 'transfer', description?.trim() || `Transfer from ${req.user.name}`, transferAmount, 'Completed']);
 
-    await runQuery('COMMIT');
+    
     res.json({ message: 'Transfer completed successfully.' });
 
   } catch (error) {
     console.error('Member transfer error:', error);
-    try { await runQuery('ROLLBACK'); } catch (e) {}
+    
     res.status(500).json({ error: 'Transfer failed. No money was moved.' });
   }
 });
@@ -497,22 +497,22 @@ app.post('/api/transfer/bank', authenticateToken, async (req, res) => {
   }
 
   try {
-    await runQuery('BEGIN IMMEDIATE');
+    
 
     const user = await getQuery('SELECT is_activated FROM users WHERE id = ?', [req.user.id]);
     if (!user || !user.is_activated) {
-      await runQuery('ROLLBACK');
+      
       return res.status(403).json({ error: 'Your account has not been activated yet.', requiresActivation: true });
     }
 
     const fromAccount = await getQuery('SELECT * FROM accounts WHERE id = ? AND user_id = ?', [fromAccountId, req.user.id]);
     if (!fromAccount) {
-      await runQuery('ROLLBACK');
+      
       return res.status(400).json({ error: 'Source account not found.' });
     }
 
     if (Number(fromAccount.balance) < transferAmount) {
-      await runQuery('ROLLBACK');
+      
       return res.status(400).json({ error: 'Insufficient funds.' });
     }
 
@@ -523,7 +523,7 @@ app.post('/api/transfer/bank', authenticateToken, async (req, res) => {
       [fromAccountId, 'bank_transfer', description?.trim() || `Bank Transfer to ${recipient}`, -transferAmount, 'Pending', recipient, accountNumber, bankName]
     );
 
-    await runQuery('COMMIT');
+    
 
     res.json({
       message: 'Bank transfer initiated successfully.',
@@ -533,7 +533,7 @@ app.post('/api/transfer/bank', authenticateToken, async (req, res) => {
 
   } catch (error) {
     console.error('Bank transfer error:', error);
-    try { await runQuery('ROLLBACK'); } catch (e) {}
+    
     res.status(500).json({ error: 'Transfer failed.' });
   }
 });
@@ -695,22 +695,22 @@ app.post('/api/admin/add-money', authenticateAdmin, async (req, res) => {
   }
 
   try {
-    await runQuery('BEGIN IMMEDIATE');
+    
 
     const account = await getQuery('SELECT id FROM accounts WHERE id = ?', [accountId]);
     if (!account) {
-      await runQuery('ROLLBACK');
+      
       return res.status(404).json({ error: 'Account not found.' });
     }
 
     await runQuery('UPDATE accounts SET balance = ROUND(balance + ?, 2) WHERE id = ?', [depositAmount, accountId]);
     await runQuery('INSERT INTO transactions (account_id, type, description, amount) VALUES (?, ?, ?, ?)', [accountId, 'deposit', description || 'Manual Deposit', depositAmount]);
 
-    await runQuery('COMMIT');
+    
     res.json({ message: `Successfully added $${depositAmount} to account ${accountId}.` });
   } catch (error) {
     console.error(error);
-    try { await runQuery('ROLLBACK'); } catch (e) {}
+    
     res.status(500).json({ error: 'Could not add money.' });
   }
 });
@@ -724,26 +724,26 @@ app.post('/api/admin/remove-money', authenticateAdmin, async (req, res) => {
   }
 
   try {
-    await runQuery('BEGIN IMMEDIATE');
+    
 
     const account = await getQuery('SELECT balance FROM accounts WHERE id = ?', [accountId]);
     if (!account) {
-      await runQuery('ROLLBACK');
+      
       return res.status(404).json({ error: 'Account not found.' });
     }
     if (account.balance < withdrawAmount) {
-      await runQuery('ROLLBACK');
+      
       return res.status(400).json({ error: 'Insufficient funds.' });
     }
 
     await runQuery('UPDATE accounts SET balance = ROUND(balance - ?, 2) WHERE id = ?', [withdrawAmount, accountId]);
     await runQuery('INSERT INTO transactions (account_id, type, description, amount) VALUES (?, ?, ?, ?)', [accountId, 'withdrawal', description || 'Manual Withdrawal', -withdrawAmount]);
 
-    await runQuery('COMMIT');
+    
     res.json({ message: `Successfully removed $${withdrawAmount} from account ${accountId}.` });
   } catch (error) {
     console.error(error);
-    try { await runQuery('ROLLBACK'); } catch (e) {}
+  
     res.status(500).json({ error: 'Could not remove money.' });
   }
 });
@@ -757,11 +757,11 @@ app.post('/api/admin/set-balance', authenticateAdmin, async (req, res) => {
   }
 
   try {
-    await runQuery('BEGIN IMMEDIATE');
+    
 
     const account = await getQuery('SELECT balance FROM accounts WHERE id = ?', [accountId]);
     if (!account) {
-      await runQuery('ROLLBACK');
+      
       return res.status(404).json({ error: 'Account not found.' });
     }
 
@@ -772,11 +772,11 @@ app.post('/api/admin/set-balance', authenticateAdmin, async (req, res) => {
       await runQuery('INSERT INTO transactions (account_id, type, description, amount) VALUES (?, ?, ?, ?)', [accountId, difference > 0 ? 'deposit' : 'withdrawal', description || 'Balance Adjustment', difference]);
     }
 
-    await runQuery('COMMIT');
+    
     res.json({ message: `Balance set to $${newBalance} for account ${accountId}.` });
   } catch (error) {
     console.error(error);
-    try { await runQuery('ROLLBACK'); } catch (e) {}
+    
     res.status(500).json({ error: 'Could not update balance.' });
   }
 });
